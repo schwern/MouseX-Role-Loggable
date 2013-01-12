@@ -2,7 +2,7 @@
 
 =head1 NAME
 
-MooseX::Role::Loggable - Extensive, yet simple, logging role using Log::Dispatchouli
+MouseX::Role::Loggable - Extensive, yet simple, logging role using Log::Dispatchouli
 
 =head1 VERSION
 
@@ -12,8 +12,8 @@ version 0.112
 
     package My::Object;
 
-    use Moose; # or Moo
-    with 'MooseX::Role::Loggable';
+    use Mouse;
+    with 'MouseX::Role::Loggable';
 
     sub do_this {
         my $self = shift;
@@ -31,8 +31,8 @@ L<Log::Dispatchouli>. Once you consume this role, you have attributes and
 methods for logging defined automatically.
 
     package MyObject;
-    use Moose # Moo works too
-    with 'MooseX::Role::Loggable';
+    use Mouse;
+    with 'MouseX::Role::Loggable';
 
     sub run {
         my $self = shift;
@@ -50,8 +50,7 @@ methods for logging defined automatically.
         $self->log_fatal('Log and die');
     }
 
-This module uses L<Moo> so it takes as little resources as it can by default,
-and can seamlessly work with both L<Moo> or L<Moose>.
+This module uses L<Mouse> so it takes as little resources as it can by default.
 
 =head1 Propagating logging definitions
 
@@ -59,8 +58,8 @@ Sometimes your objects create additional object which might want to log
 using the same settings. You can simply give them the same logger object.
 
     package Parent;
-    use Moose;
-    with 'MooseX::Role::Loggable';
+    use Mouse;
+    with 'MouseX::Role::Loggable';
 
     has child => (
         is      => 'ro',
@@ -222,10 +221,10 @@ Occassionally you might encounter the following error:
 
     no ident specified when using Log::Dispatchouli at Loggable.pm line 117.
 
-The problem does not stem from L<MooseX::Role::Loggable>, but from a builder
-calling a logging method before the logger is built. Since L<Moo> and L<Moose>
-do not assure order of building attributes, which means that some attributes
-might not exist by the time you need them.
+The problem does not stem from L<MouseX::Role::Loggable>, but from a builder
+calling a logging method before the logger is built. Since L<Mouse>
+does not assure order of building attributes, some attributes might not yet
+exist by the time you need them.
 
 This specific error happens when the C<ident> attribute isn't built by the
 time a builder runs. In order to avoid it, the attribute which uses the builder
@@ -234,8 +233,8 @@ example:
 
     package Stuff;
 
-    use Moose;
-    with 'MooseX::Role::Logger';
+    use Mouse;
+    with 'MouseX::Role::Logger';
 
     has db => (
         is      => 'ro',
@@ -258,13 +257,23 @@ This makes the C<db> attribute non-lazy, but during run-time. This will assure
 that all the logging attributes are created B<before> you build the C<db>
 attribute and call C<log_debug>.
 
-=head1 AUTHOR
+=head1 AUTHORS
+
+=over 4
+
+=item *
 
 Sawyer X <xsawyerx@cpan.org>
 
+=item *
+
+Michael G Schwern <schwern@pobox.com>
+
+=back
+
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2012 by Sawyer X.
+This software is copyright (c) 2013 by Michael G Schwern.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
