@@ -5,7 +5,7 @@ package MouseX::Role::Loggable;
 
 use Carp;
 use Safe::Isa;
-use Mouse::Role 1.04;
+use Mouse::Role;
 use Mouse::Util::TypeConstraints;
 use MouseX::Types::Mouse qw<Bool Str>;
 use Log::Dispatchouli;
