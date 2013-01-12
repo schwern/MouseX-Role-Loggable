@@ -1,15 +1,18 @@
 use strict;
 use warnings;
-package MooseX::Role::Loggable;
+package MouseX::Role::Loggable;
 # ABSTRACT: Extensive, yet simple, logging role using Log::Dispatchouli
 
 use Carp;
 use Safe::Isa;
-use Moo::Role;
-use MooX::Types::MooseLike::Base qw<Bool Str>;
-use Sub::Quote 'quote_sub';
+use Mouse::Role;
+use Mouse::Util::TypeConstraints;
+use MouseX::Types::Mouse qw<Bool Str>;
 use Log::Dispatchouli;
 use namespace::sweep;
+
+class_type 'Log::Dispatchouli';
+class_type 'Log::Dispatchouli::Proxy';
 
 my %attr_meth_map = (
     logger_facility => 'facility',
@@ -25,13 +28,13 @@ my %attr_meth_map = (
 has debug => (
     is      => 'ro',
     isa     => Bool,
-    default => sub {0},
+    default => 0,
 );
 
 has logger_facility => (
     is      => 'ro',
     isa     => Str,
-    default => sub {'local6'},
+    default => 'local6',
 );
 
 has logger_ident => (
@@ -43,19 +46,19 @@ has logger_ident => (
 has log_to_file => (
     is      => 'ro',
     isa     => Bool,
-    default => sub {0},
+    default => 0,
 );
 
 has log_to_stdout => (
     is      => 'ro',
     isa     => Bool,
-    default => sub {0},
+    default => 0,
 );
 
 has log_to_stderr => (
     is      => 'ro',
     isa     => Bool,
-    default => sub {0},
+    default => 0,
 );
 
 has log_file => (
@@ -73,40 +76,32 @@ has log_path => (
 has log_pid => (
     is      => 'ro',
     isa     => Bool,
-    default => sub {1},
+    default => 1,
 );
 
 has log_fail_fatal => (
     is      => 'ro',
     isa     => Bool,
-    default => sub {1},
+    default => 1,
 );
 
 has log_muted => (
     is      => 'ro',
     isa     => Bool,
-    default => sub {0},
+    default => 0,
 );
 
 has log_quiet_fatal => (
     is      => 'ro',
-    isa     => quote_sub(q{
-        use Safe::Isa;
-        $_[0] || $_[0]->$_isa( ref [] )
-            or die "$_[0] must be a string or arrayref"
-    }),
-    default => sub {'stderr'},
+    isa     => 'Str|ArrayRef',
+    default => 'stderr',
 );
 
 has logger => (
-    is      => 'lazy',
-    isa     => quote_sub(q{
-        use Safe::Isa;
-        $_[0]->$_isa('Log::Dispatchouli')        ||
-        $_[0]->$_isa('Log::Dispatchouli::Proxy')
-            or die "$_[0] must be a Log::Dispatchouli object";
-    }),
-
+    is      => 'ro',
+    isa     => 'Log::Dispatchouli|Log::Dispatchouli::Proxy',
+    lazy    => 1,
+    builder => '_build_logger',
     handles => [ qw/
         log log_fatal log_debug
         set_debug clear_debug set_prefix clear_prefix set_muted clear_muted
@@ -179,7 +174,7 @@ sub BUILDARGS {
 sub log_fields {
     my $self    = shift;
     my $warning =
-        '[MooseX::Role::Loggable] Calling ->log_fields() is deprecated, ' .
+        '[MouseX::Role::Loggable] Calling ->log_fields() is deprecated, ' .
         'it will be removed in the next version';
 
     $self->log( { level => 'warning' }, $warning );
@@ -196,8 +191,8 @@ __END__
 
     package My::Object;
 
-    use Moose; # or Moo
-    with 'MooseX::Role::Loggable';
+    use Mouse;
+    with 'MouseX::Role::Loggable';
 
     sub do_this {
         my $self = shift;
@@ -215,8 +210,8 @@ L<Log::Dispatchouli>. Once you consume this role, you have attributes and
 methods for logging defined automatically.
 
     package MyObject;
-    use Moose # Moo works too
-    with 'MooseX::Role::Loggable';
+    use Mouse;
+    with 'MouseX::Role::Loggable';
 
     sub run {
         my $self = shift;
@@ -234,8 +229,7 @@ methods for logging defined automatically.
         $self->log_fatal('Log and die');
     }
 
-This module uses L<Moo> so it takes as little resources as it can by default,
-and can seamlessly work with both L<Moo> or L<Moose>.
+This module uses L<Mouse> so it takes as little resources as it can by default.
 
 =head1 Propagating logging definitions
 
@@ -243,8 +237,8 @@ Sometimes your objects create additional object which might want to log
 using the same settings. You can simply give them the same logger object.
 
     package Parent;
-    use Moose;
-    with 'MooseX::Role::Loggable';
+    use Mouse;
+    with 'MouseX::Role::Loggable';
 
     has child => (
         is      => 'ro',
@@ -406,9 +400,9 @@ Occassionally you might encounter the following error:
 
     no ident specified when using Log::Dispatchouli at Loggable.pm line 117.
 
-The problem does not stem from L<MooseX::Role::Loggable>, but from a builder
-calling a logging method before the logger is built. Since L<Moo> and L<Moose>
-do not assure order of building attributes, some attributes might not yet
+The problem does not stem from L<MouseX::Role::Loggable>, but from a builder
+calling a logging method before the logger is built. Since L<Mouse>
+does not assure order of building attributes, some attributes might not yet
 exist by the time you need them.
 
 This specific error happens when the C<ident> attribute isn't built by the
@@ -418,8 +412,8 @@ example:
 
     package Stuff;
 
-    use Moose;
-    with 'MooseX::Role::Logger';
+    use Mouse;
+    with 'MouseX::Role::Logger';
 
     has db => (
         is      => 'ro',

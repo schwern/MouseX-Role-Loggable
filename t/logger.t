@@ -6,14 +6,14 @@ use Test::More tests => 10;
 
 {
     package Foo;
-    use Moo;
-    with 'MooseX::Role::Loggable';
+    use Mouse;
+    with 'MouseX::Role::Loggable';
 }
 
 {
     package Bar;
-    use Moo;
-    with 'MooseX::Role::Loggable';
+    use Mouse;
+    with 'MouseX::Role::Loggable';
     has '+logger_ident' => ( default => sub {'MyLogger'} );
 }
 

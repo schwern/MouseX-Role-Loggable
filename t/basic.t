@@ -6,13 +6,13 @@ use Test::More tests => 5;
 
 {
     package Foo;
-    use Moo;
-    with 'MooseX::Role::Loggable';
+    use Mouse;
+    with 'MouseX::Role::Loggable';
 }
 
 my $foo = Foo->new;
 ok(
-    $foo->does('MooseX::Role::Loggable'),
+    $foo->does('MouseX::Role::Loggable'),
     'Role consumptions works',
 );
 

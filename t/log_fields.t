@@ -16,10 +16,11 @@ local $SIG{'__WARN__'} = sub {
 
 {
     package Foo;
-    use Moo;
-    with 'MooseX::Role::Loggable';
-    # override log()
-    sub log {
+    use Mouse;
+    with 'MouseX::Role::Loggable';
+    # override log(), do it after the role is applied
+    no warnings 'redefine', 'once';
+    *log  = sub {
         my ( $class, $args, $msg ) = @_;
         ::isa_ok( $class, 'Foo'  );
         ::isa_ok( $args,  'HASH' );
@@ -29,8 +30,7 @@ local $SIG{'__WARN__'} = sub {
             qr/\Qlog_fields() is deprecated\E/,
             'Correct dep warning',
         );
-    }
-
+    };
 }
 
 my $foo = Foo->new();

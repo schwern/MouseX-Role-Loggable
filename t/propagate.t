@@ -6,14 +6,14 @@ use Test::More;
 
 {
     package Foo;
-    use Moo;
-    with 'MooseX::Role::Loggable';
+    use Mouse;
+    with 'MouseX::Role::Loggable';
 }
 
 {
     package Bar;
-    use Moo;
-    with 'MooseX::Role::Loggable';
+    use Mouse;
+    with 'MouseX::Role::Loggable';
 }
 
 {

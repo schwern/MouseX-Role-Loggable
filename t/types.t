@@ -7,8 +7,8 @@ use Test::Fatal;
 
 {
     package MyTestZASD2;
-    use Moo;
-    with 'MooseX::Role::Loggable';
+    use Mouse;
+    with 'MouseX::Role::Loggable';
 }
 
 my $class = 'MyTestZASD2';

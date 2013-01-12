@@ -8,8 +8,8 @@ use Test::More;
 
 {
     package Object;
-    use Moo;
-    with 'MooseX::Role::Loggable';
+    use Mouse;
+    with 'MouseX::Role::Loggable';
     has hello => ( is => 'ro' );
     sub BUILDARGS {
         my $class = shift;
@@ -21,7 +21,7 @@ use Test::More;
 
 my $object = Object->new();
 isa_ok( $object, 'Object' );
-cmp_ok( $object->does('MooseX::Role::Loggable'), '==', 1, 'Role applied' );
+cmp_ok( $object->does('MouseX::Role::Loggable'), '==', 1, 'Role applied' );
 can_ok( $object, 'hello' );
 can_ok( $object, 'debug', 'log', 'log_debug' );
 is( $object->hello, 'What up!', 'BUILDARGS not overwritten' );
