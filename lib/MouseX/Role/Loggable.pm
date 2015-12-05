@@ -9,7 +9,7 @@ use Mouse::Role;
 use Mouse::Util::TypeConstraints;
 use MouseX::Types::Mouse qw<Bool Str>;
 use Log::Dispatchouli;
-use namespace::sweep;
+use namespace::autoclean;
 
 class_type 'Log::Dispatchouli';
 class_type 'Log::Dispatchouli::Proxy';
